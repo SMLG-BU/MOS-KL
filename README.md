@@ -137,3 +137,8 @@ Already included at `data/Tan_data-2/GCM.txt`; nothing to download.
 Private; not included. `reproduce_accuracy` and `reproduce_runtime` skip it
 automatically. If you have `newAD.txt`, place it at `source/data/newAD/newAD.txt`
 and it will be included.
+
+## Acknowledgments
+
+This project was developed with the assistance of **Claude**, an AI assistant created by **Anthropic**, which helped in writing and integrating the codebase.
+
