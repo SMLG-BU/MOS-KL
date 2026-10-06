@@ -5,7 +5,7 @@ function plotSemiSyntheticScalingV2(svmCsv, restCsv, outdir)
 % Tumor training samples (log x-axis). Six curves: SVM / MLP / ResNet-3, each in
 % the MLS representation (solid) and on the original features (dashed). The SVM
 % curves come from the RADIAL run; MLP/ResNet-3 (kernel-independent) from the
-% linear per-sample v2 run. A dotted horizontal line marks the best ensemble
+% linear per-sample v2 run. A dotted curve marks the best ensemble
 % baseline (the RF/GB/RUS model with the highest mean accuracy), drawn at its mean
 % value across the five sizes.
 %
@@ -43,15 +43,15 @@ for s = sins
         else,     metric = 'Precision'; ylab = 'Precision'; end
         subplot(1,2,sp); hold on;
 
-        % ---- best baseline (by mean accuracy across sizes), horizontal dotted line ----
+        % ---- best baseline, dotted curve ----
         bestMeanAcc = -inf; bestBase = bases(1);
         for b = bases
             accv = baseSeries(Trest, s, b, 'Accuracy', sample_sizes);
             if mean(accv,'omitnan') > bestMeanAcc, bestMeanAcc = mean(accv,'omitnan'); bestBase = b; end
         end
-        hval = mean(baseSeries(Trest, s, bestBase, metric, sample_sizes), 'omitnan');
-        yline(hval, ':', 'Color',[0.35 0.35 0.35], 'LineWidth',2, ...
-            'HandleVisibility','off');
+        %hval = mean(baseSeries(Trest, s, bestBase, metric, sample_sizes), 'omitnan');
+        %yline(hval, ':', 'Color',[0.35 0.35 0.35], 'LineWidth',2, ...
+        %    'HandleVisibility','off');
 
         % ---- model curves ----
         for mi = 1:numel(models)
@@ -64,9 +64,12 @@ for s = sins
                     'DisplayName', sprintf('%s (%s)', models(mi), repname{reps(ri)+1}));
             end
         end
-        % proxy for the baseline legend entry
-        plot(nan, nan, ':', 'Color',[0.35 0.35 0.35], 'LineWidth',2, ...
+        % best baseline drawn as its ACTUAL per-size curve (dotted, varies with size)
+        bvals = baseSeries(Trest, s, bestBase, metric, sample_sizes);
+        plot(sample_sizes, bvals, ':o', 'Color',[0.35 0.35 0.35], 'LineWidth',2, ...
+            'MarkerSize',5, 'MarkerEdgeColor',[0.35 0.35 0.35], 'MarkerFaceColor',[1 1 1], ...
             'DisplayName', sprintf('best baseline (%s)', shortBase(bestBase)));
+
 
         ylim([0.45 1]); axis square; grid on;
         set(gca, 'XScale','log', 'Box','off', 'TickDir','out', ...
